@@ -1,82 +1,50 @@
 import React, { Component } from 'react';
 import { Grid, Transition, Header, Form, Message, Button, Segment } from 'semantic-ui-react';
+import axios from 'axios';
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      name: '',
+      answerer: '',
+      quizName: 'Emilias Dop',
       currentStage: -1,
-      questions: [{
-        id: 1,
-        question: 'Vilket datum är Emilia född?',
-        value: '',
-        options: []
-      }, {
-        id: 2,
-        question: 'Hur lång var emilia när hon var två månader gammal?',
-        value: '',
-        options: [{
-          label: '35,5 cm',
-          value: '35.5'
-        }, {
-          label: '36,0 cm',
-          value: '36'
-        }, {
-          label: '36,5 cm',
-          value: '36.5'
-        }]
-      }, {
-        id: 3,
-        question: 'Vad heter Emilia I efternamn?',
-        value: '',
-        options: []
-      }, {
-        id: 4,
-        question: 'Vad har Emilia för andranamn?',
-        value: '',
-        options: []
-      }, {
-        id: 5,
-        question: 'Vilket klockslag föddes Emilia?',
-        value: '',
-        options: []
-      }, {
-        id: 6,
-        question: 'Vad gillar Emilia mest?',
-        value: '',
-        options: [{
-          label: 'Babblarna',
-          value: 'babblarna'
-        }, {
-          label: 'Blinka lilla stjärna',
-          value: 'blinka_lilla_stjarna'
-        }]
-      }, {
-        id: 7,
-        question: 'Hur många dagar gammal är Emilia idag (21/4-18)',
-        value: '',
-        options: []
-      }, {
-        id: 8,
-        question: 'Hur många tremänningar har Emilia?',
-        value: '',
-        options: []
-      }]
+      questions: []
     };
   }
 
   componentDidMount = () => {
+    axios.get('http://localhost:8000/api/v1/quiz/1')
+      .then(response => response.data).then((quizData) => {
+        const questions = quizData.question_set.map(question => (
+          {
+            id: question.id,
+            question: question.question_text,
+            value: '',
+            options: question.option_set.map(option => (
+              {
+                value: option.id,
+                label: option.label
+              }
+            ))
+          }
+        ));
+
+        this.setState({
+          questions
+        })
+      });
+
     this.setState({ currentStage: 1 });
   };
 
-  onNameChanged = (e) => {
-    this.setState({ name: e.target.value });
+  onAnswererChanged = (e) => {
+    this.setState({ answerer: e.target.value });
   };
 
   startStageTransition = () => {
-    if (this.state.name) {
+    if (this.state.answerer) {
       this.setState({ currentStage: -1 });
       return;
     }
@@ -120,7 +88,7 @@ class App extends Component {
                       content='Du måste ange ditt namn'
                     />
                   )}
-                  <Form.Input label="" onChange={this.onNameChanged} value={this.state.name} placeholder="Ange ditt namn" />
+                  <Form.Input label="" onChange={this.onAnswererChanged} value={this.state.name} placeholder="Ange ditt namn" />
                   <div style={{ textAlign: 'center' }}>
                     <Button onClick={this.startStageTransition} style={{ marginTop: '1em' }}>Börja</Button>
                   </div>

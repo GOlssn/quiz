@@ -6,7 +6,7 @@ from quiz.models import Quiz, Question, Option
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
-        fields = ('label', )
+        fields = ('id', 'label')
 
 
 class QuestionSerializer(serializers.ModelSerializer):
