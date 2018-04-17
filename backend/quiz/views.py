@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework import viewsets, mixins
 
-# Create your views here.
+from quiz.models import Quiz
+from quiz.serializers import QuizSerializer
+
+
+class QuizViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Quiz.objects.all()
+    serializer_class = QuizSerializer
